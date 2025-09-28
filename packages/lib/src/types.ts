@@ -1,4 +1,4 @@
-export type ClaimStage = 'Intake'|'Inspection Scheduled'|'Inspection Complete'|'Estimate Written'|'Carrier Approval Pending'|'Closed';
+export type ClaimStage = 'Intake'|'Contacted'|'Inspection Scheduled'|'Inspection Completed'|'Estimate Written'|'Carrier Approval Pending'|'Carrier Approved'|'Closed'|'Update'|'Mark Complete';
 export type SeverityLevel = 'critical' | 'urgent' | 'standard';
 
 export type Claim = {
