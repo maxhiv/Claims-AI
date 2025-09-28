@@ -3,5 +3,6 @@
   "/templates/page": "app/templates/page.js",
   "/claims/[id]/page": "app/claims/[id]/page.js",
   "/api/proxy/claims/assignments/route": "app/api/proxy/claims/assignments/route.js",
-  "/claims/intake/page": "app/claims/intake/page.js"
+  "/claims/intake/page": "app/claims/intake/page.js",
+  "/api/proxy/claims/[claimId]/appointments/route": "app/api/proxy/claims/[claimId]/appointments/route.js"
 }
