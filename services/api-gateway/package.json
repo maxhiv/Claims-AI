@@ -1,0 +1,20 @@
+{
+  "name": "api-gateway",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "echo "(skipped)""
+  },
+  "dependencies": {
+    "fastify": "^4.27.2",
+    "fastify-cors": "^8.5.0",
+    "fastify-rate-limit": "^8.0.0",
+    "pino": "^9.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}

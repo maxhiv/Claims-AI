@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info: { title: AI Scheduler API, version: 1.0.0 }
+servers: [{ url: /api }]
+paths:
+  /claims/assignments:
+    get:
+      summary: Pull assigned/updated claims for an adjuster
+      parameters:
+        - { name: adjusterId, in: query, schema: { type: string }, required: true }
+        - { name: since, in: query, schema: { type: string, format: date-time } }
+      responses: { '200': { description: OK } }
+  /claims/{claimId}/appointments:
+    get: { summary: List appointments, responses: { '200': { description: OK } } }
+    post:
+      summary: Create/update appointment (idempotent)
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Appointment' } } } }
+      responses: { '200': { description: Upserted } }
+  /claims/{claimId}/communications:
+    post: { summary: Log SMS/Email outreach, responses: { '202': { description: Accepted } } }
+  /claims/{claimId}/stage:
+    patch: { summary: Update claim stage, responses: { '200': { description: Updated } } }
+  /routing/optimize:
+    post: { summary: Optimize route/day plan, responses: { '200': { description: OK } } }
+components:
+  schemas:
+    Appointment:
+      type: object
+      properties:
+        idempotencyKey: { type: string }
+        start: { type: string, format: date-time }
+        end: { type: string, format: date-time }
+        status: { type: string, enum: [proposed,pending,confirmed,canceled,completed] }
+        location:
+          type: object
+          properties: { address: { type: string }, lat: { type: number }, lng: { type: number } }
+        channel: { type: string, enum: [sms,email,voice] }
+        messageId: { type: string }
+        notes: { type: string }

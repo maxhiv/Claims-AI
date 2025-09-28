@@ -1,0 +1,11 @@
+{
+  "name": "ai-scheduler-monorepo",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r --parallel build",
+    "lint": "pnpm -r --parallel lint",
+    "start": "pnpm -r --parallel start"
+  }
+}

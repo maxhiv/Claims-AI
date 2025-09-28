@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aischeduler
+    ports: ["5432:5432"]
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+  api-gateway:
+    build: ./services/api-gateway
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - OIDC_ISSUER=${OIDC_ISSUER}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET}
+    ports: ["4000:4000"]
+    depends_on: [postgres, redis]
+  cq-middleware:
+    build: ./services/cq-middleware
+    environment:
+      - CQ_BASE_URL=${CQ_BASE_URL}
+      - CQ_CLIENT_ID=${CQ_CLIENT_ID}
+      - CQ_CLIENT_SECRET=${CQ_CLIENT_SECRET}
+    ports: ["4100:4100"]
+    depends_on: [api-gateway]
+  comms-service:
+    build: ./services/comms-service
+    environment:
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+    ports: ["4200:4200"]
+    depends_on: [redis]
+  scheduler-service:
+    build: ./services/scheduler-service
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+    depends_on: [postgres, redis]
+  routing-service:
+    build: ./services/routing-service
+    environment:
+      - MAPS_PROVIDER=${MAPS_PROVIDER}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - OSRM_BASE_URL=${OSRM_BASE_URL}
+      - WEATHER_API_KEY=${WEATHER_API_KEY}
+    ports: ["4300:4300"]
+  worker:
+    build: ./services/worker
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+    depends_on: [redis, postgres]
+  web:
+    build: ./apps/web
+    environment:
+      - API_GATEWAY_URL=${API_GATEWAY_URL}
+    ports: ["3000:3000"]
+    depends_on: [api-gateway]
