@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import pg from 'pg';
 import { randomUUID } from 'crypto';
+import { registerCommunicationRoutes } from './communication';
 
 const { Pool } = pg;
 
@@ -246,6 +247,9 @@ app.patch('/api/claims/:claimId/stage', async (req, reply) => {
     return reply.status(500).send({ error: 'Internal server error' });
   }
 });
+
+// Register communication routes
+registerCommunicationRoutes(app);
 
 // POST /api/routing/optimize - optimize route (keep stub for now)
 app.post('/api/routing/optimize', async (req, reply) => {
