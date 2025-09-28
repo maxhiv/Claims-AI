@@ -1,6 +1,6 @@
-import AppointmentCard from '../../components/../components/cards/AppointmentCard';
-import CommsLog from '../../components/../components/comms-log/Log';
-import StageTracker from '../../components/../components/stage-tracker/StageTracker';
+import AppointmentCard from '../../../components/cards/AppointmentCard';
+import CommsLog from '../../../components/comms-log/Log';
+import StageTracker from '../../../components/stage-tracker/StageTracker';
 
 type Params = { params: { id: string } };
 
