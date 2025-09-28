@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "next dev -H 0.0.0.0 -p 5000",
     "build": "next build",
-    "start": "next start -p 3000",
+    "start": "next start -H 0.0.0.0 -p 5000",
     "lint": "echo \"(skipped)\""
   },
   "dependencies": {
@@ -14,6 +14,8 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@types/node": "24.5.2",
+    "@types/react": "19.1.15",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",

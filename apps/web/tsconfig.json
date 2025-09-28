@@ -1,5 +1,30 @@
 {
   "extends": "../../packages/config/tsconfig.base.json",
-  "compilerOptions": { "baseUrl": ".", "paths": {} },
-  "include": ["app/**/*", "components/**/*"]
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {},
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "app/**/*",
+    "components/**/*",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
