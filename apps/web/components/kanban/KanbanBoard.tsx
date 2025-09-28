@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface ClaimCardData {
   name: string;
@@ -36,6 +36,9 @@ const workflowStages = [
 
 export default function KanbanBoard({ claims, onClaimStageUpdate }: KanbanBoardProps) {
   const [draggedClaim, setDraggedClaim] = useState<ClaimCardData | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const getClaimsForStage = (stage: string) => {
     return claims.filter(claim => claim.stage === stage);
@@ -77,12 +80,43 @@ export default function KanbanBoard({ claims, onClaimStageUpdate }: KanbanBoardP
     setDraggedClaim(null);
   };
 
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+      updateScrollButtons();
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+      updateScrollButtons();
+    }
+  };
+
+  const updateScrollButtons = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+  };
+
   const getPriorityColor = (priorityScore?: number) => {
     if (!priorityScore) return 'border-gray-200';
     if (priorityScore >= 80) return 'border-red-300 border-l-4 border-l-red-500';
     if (priorityScore >= 60) return 'border-orange-300 border-l-4 border-l-orange-500';
     return 'border-green-300 border-l-4 border-l-green-500';
   };
+
+  // Initialize scroll button states on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateScrollButtons();
+    }, 100); // Small delay to ensure DOM is rendered
+    
+    return () => clearTimeout(timer);
+  }, [claims]);
 
   return (
     <div className="w-full h-full bg-gray-50 p-6">
@@ -91,7 +125,37 @@ export default function KanbanBoard({ claims, onClaimStageUpdate }: KanbanBoardP
         <p className="text-gray-600">Drag and drop claims between workflow stages</p>
       </div>
       
-      <div className="flex gap-6 overflow-x-auto pb-6">
+      {/* Scroll Controls */}
+      <div className="flex justify-end gap-2 mb-4">
+        <button
+          onClick={scrollLeft}
+          disabled={!canScrollLeft}
+          className={`px-3 py-2 rounded-lg border ${
+            canScrollLeft 
+              ? 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300' 
+              : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+          }`}
+        >
+          ← Left
+        </button>
+        <button
+          onClick={scrollRight}
+          disabled={!canScrollRight}
+          className={`px-3 py-2 rounded-lg border ${
+            canScrollRight 
+              ? 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300' 
+              : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+          }`}
+        >
+          Right →
+        </button>
+      </div>
+      
+      <div 
+        ref={scrollContainerRef}
+        className="flex gap-6 overflow-x-auto pb-6"
+        onScroll={updateScrollButtons}
+      >
         {workflowStages.map((stage) => {
           const stageClaims = getClaimsForStage(stage.key);
           return (
