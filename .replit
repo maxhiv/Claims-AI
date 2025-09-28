@@ -22,6 +22,14 @@ args = "Frontend"
 task = "workflow.run"
 args = "API Gateway"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "CQ Middleware"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Scheduler Service"
+
 [[workflows.workflow]]
 name = "Frontend"
 author = "agent"
@@ -46,6 +54,30 @@ waitForPort = 8000
 [workflows.workflow.metadata]
 outputType = "console"
 
+[[workflows.workflow]]
+name = "CQ Middleware"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd services/cq-middleware && npm run dev"
+waitForPort = 6000
+
+[[workflows.workflow]]
+name = "Scheduler Service"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd services/scheduler-service && npm run dev"
+waitForPort = 6800
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
@@ -57,6 +89,14 @@ externalPort = 80
 [[ports]]
 localPort = 8000
 externalPort = 8000
+
+[[ports]]
+localPort = 6000
+externalPort = 6000
+
+[[ports]]
+localPort = 6800
+externalPort = 6800
 
 [deployment]
 deploymentTarget = "autoscale"
