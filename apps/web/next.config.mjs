@@ -1,10 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = { 
-  experimental: { appDir: true },
   // Allow all hosts for Replit proxy environment
-  allowedHosts: '*',
-  devServer: {
-    allowedHosts: 'all'
+  webpack: (config, { dev, isServer }) => {
+    if (dev) {
+      // Allow all hosts for development
+      config.devServer = {
+        ...config.devServer,
+        allowedHosts: 'all'
+      };
+    }
+    return config;
   }
 };
 export default nextConfig;
