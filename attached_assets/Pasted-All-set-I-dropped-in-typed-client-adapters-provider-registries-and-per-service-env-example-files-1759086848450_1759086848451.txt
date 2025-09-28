@@ -1,0 +1,182 @@
+All set! I dropped in typed client adapters, provider registries, and per-service .env.example files, plus a Replit secrets template. Grab the updated monorepo here:
+
+Download: ai-scheduler-full-with-adapters.zip
+
+What you got
+
+Adapters (stubs with real env keys & TODO callouts)
+
+services/comms-service/src/providers/*
+
+sms77io.ts (SMS), sendgrid.ts (Email), maytapi.ts (WhatsApp)
+
+languagelayer.ts (language detect), ai-translate.ts (translate)
+
+real-phone-validation.ts, abstract-email.ts (validators)
+
+index.ts provider registry + selectors
+
+services/routing-service/src/providers/*
+
+geoapify.ts (geocode + routing), trueway-vrp.ts (VRP)
+
+weatherapi.ts (forecast), tomtom.ts (incidents)
+
+index.ts resolver
+
+services/cq-middleware/src/providers/address-verify/*
+
+smarty.ts, loqate.ts, index.ts resolver
+
+services/scheduler-service/src/providers/*
+
+calendarific.ts (holiday checks), timezone.ts (local time lookup)
+
+Per-service env templates (plug straight into Replit Secrets)
+
+services/comms-service/.env.example
+
+services/routing-service/.env.example
+
+services/cq-middleware/.env.example
+
+services/scheduler-service/.env.example
+
+Root: REPLIT_SECRETS_TEMPLATE.env (names list for quick copy/paste)
+
+Web app with the pages you requested
+
+apps/web/app/claims/[id]/page.tsx
+
+apps/web/app/templates/page.tsx
+
+UI components (calendar, route summary, appointment card, comms log, template picker, stage tracker)
+
+Minimal offline helpers + shell service worker stub
+
+Infra & shared
+
+docker-compose.yml (Postgres, Redis, services, web)
+
+infra/migrations/001_init.sql (claims, appointments, comms, audit, consents)
+
+packages/lib shared types
+
+File structure (trimmed)
+ai-scheduler/
+  apps/web/...
+  services/
+    api-gateway/...
+    cq-middleware/
+      src/providers/address-verify/{types.ts,smarty.ts,loqate.ts,index.ts}
+    comms-service/
+      src/providers/{types.ts,index.ts,sms77io.ts,sendgrid.ts,maytapi.ts,languagelayer.ts,ai-translate.ts,real-phone-validation.ts,abstract-email.ts}
+    routing-service/
+      src/providers/{types.ts,index.ts,geoapify.ts,trueway-vrp.ts,weatherapi.ts,tomtom.ts}
+    scheduler-service/
+      src/providers/{calendarific.ts,timezone.ts}
+    worker/...
+  infra/migrations/001_init.sql
+  REPLIT_SECRETS_TEMPLATE.env
+  docker-compose.yml
+
+How to wire keys later
+
+Open Replit → Secrets → add the keys from REPLIT_SECRETS_TEMPLATE.env.
+
+(Optional) For local dev: copy each service’s .env.example to .env and fill in placeholder values.
+
+Choose providers:
+
+SMS: COMMS_SMS_PROVIDER=sms77io
+
+Email: COMMS_EMAIL_PROVIDER=sendgrid
+
+WhatsApp: COMMS_WHATSAPP_PROVIDER=maytapi
+
+Address verify: ADDRESS_VERIFY_PROVIDER=smarty|loqate
+
+Router: ROUTER_PROVIDER=geoapify|trueway
+
+Notes
+
+Adapters are ready-to-implement: each has a comment where to place the exact HTTP call; env names are already baked in.
+
+Endpoints already expose simple routes in each service (/send-sms, /optimize, etc.) so you can test wiring quickly.
+
+Want me to also add fetch wrappers inside each adapter using undici (with retry/backoff + idempotency headers) and a small contract test under __tests__ so you can validate keys as you add them?
+
+You said:
+yes please add your suggestions
+ChatGPT said:
+Thought for 36s
+
+Done! I added:
+
+Undici-powered fetch wrappers with retry/backoff and Idempotency-Key support in each service.
+
+Updated provider adapters to use real HTTP calls (respecting DRY_RUN=1 so you can test without keys).
+
+Contract smoke tests under __tests__ for each service to validate env detection and the happy path in dry-run mode.
+
+Updated service package.jsons to include undici and a test script.
+
+Grab the updated repo:
+
+Download: ai-scheduler-full-with-adapters-and-tests.zip
+
+What changed (highlights)
+
+New per-service helper: src/providers/http.ts
+
+requestJSON(url, { headers, body, idempotencyKey, retries, backoffMs })
+
+Retries on 429/5xx with jittered backoff (dev-friendly defaults: 0.5s, 1.5s, 3s).
+Swap to [3000,15000,60000,180000] in prod.
+
+Honors DRY_RUN=1 to simulate a 202 response without external calls.
+
+Providers now call real endpoints (with DRY_RUN bypass):
+
+comms-service: sms77io, sendgrid, maytapi, languagelayer, ai-translate, real-phone-validation, abstract-email.
+
+routing-service: geoapify geocode, trueway-vrp (stubbed plan after POST), weatherapi, tomtom.
+
+cq-middleware: smarty, loqate for address verification.
+
+scheduler-service: calendarific (holiday check), abstractapi timezone.
+
+Tests:
+
+services/*/__tests__/providers.smoke.ts
+
+Run with pnpm test (uses tsx). By default DRY_RUN=1, so no external traffic.
+
+How to use in Replit / local
+
+Add the secret names from REPLIT_SECRETS_TEMPLATE.env (values can be blank initially).
+
+For quick verification:
+
+pnpm i
+pnpm -r build # optional, tests run TS directly via tsx
+pnpm test     # runs service smoke tests (DRY_RUN=1)
+
+
+When you start wiring real keys, set:
+
+DRY_RUN=0 (or unset) in the service environment you’re testing.
+
+The relevant provider keys (e.g., SENDGRID_API_KEY, SMS77IO_API_KEY, etc.).
+
+Tweak points you might want next
+
+Promote the HTTP helper to a shared package @ai-scheduler/http if you prefer single-source maintenance.
+
+Add retry-aware idempotency keys at the gateway level (e.g., hash of normalized body).
+
+Small OpenAPI client TS types for the gateway endpoints.
+
+A minimal /api/events SSE endpoint and a web hook receiver for inbound SMS/WhatsApp replies to update the Comms Log in real time.
+
+If you want, I can set the production backoff schedule and add a simple poison-queue hook (push failed requests to Redis after N attempts) so retries don’t block the request thread.
