@@ -1,0 +1,103 @@
+├─ package.json # pnpm workspaces
+│ ├─ lib/ # shared types, utils, SDKs
+│ └─ ui/ # shared React UI primitives (shadcn themed)
+├─ apps/
+│ └─ web/ # Next.js dashboard/mobile PWA
+│ ├─ app/ # App Router pages
+│ │ ├─ (dashboard)/
+│ │ │ ├─ page.tsx # main dashboard (calendar + map + alerts)
+│ │ │ ├─ claims/[id]/page.tsx
+│ │ │ ├─ schedule/page.tsx
+│ │ │ └─ templates/page.tsx
+│ │ ├─ api/ # next server routes (only UI helpers; business stays in services)
+│ │ ├─ layout.tsx
+│ │ └─ offline/ # offline screens
+│ ├─ components/
+│ │ ├─ calendar/
+│ │ ├─ map/
+│ │ ├─ cards/
+│ │ ├─ templates/ # message templates UI
+│ │ ├─ comms-log/
+│ │ ├─ stage-tracker/
+│ │ ├─ sync-status/
+│ │ └─ route-planner/
+│ ├─ lib/
+│ │ ├─ api-client.ts # typed client to api-gateway (OpenAPI generated)
+│ │ ├─ offline.ts # IndexedDB helpers, queue
+│ │ └─ i18n.ts
+│ ├─ public/
+│ ├─ styles/
+│ ├─ sw.ts # service worker (background sync)
+│ ├─ tailwind.config.ts
+│ └─ next.config.mjs
+├─ services/
+│ ├─ api-gateway/ # single entry for web → backend
+│ │ ├─ src/
+│ │ │ ├─ index.ts # Fastify, authZ, rate limit, OpenAPI
+│ │ │ ├─ routes/
+│ │ │ │ ├─ claims.ts # proxy+aggregate from middleware
+│ │ │ │ ├─ appointments.ts
+│ │ │ │ ├─ communications.ts
+│ │ │ │ ├─ stage.ts
+│ │ │ │ ├─ routing.ts
+│ │ │ │ └─ metrics.ts
+│ │ │ ├─ middleware/
+│ │ │ └─ plugins/
+│ │ ├─ openapi.yaml # exported contract for web client
+│ │ └─ package.json
+│ ├─ cq-middleware/ # Davies CQ/CoreLogic/XactAnalysis adapter
+│ │ ├─ src/
+│ │ │ ├─ index.ts
+│ │ │ ├─ clients/ # CQ/Xact/CoreLogic SDKs
+│ │ │ ├─ routes/ # implements required endpoints
+│ │ │ │ ├─ assignments.get.ts # GET /claims/assignments
+│ │ │ │ ├─ appointments.get.ts # GET /claims/:id/appointments
+│ │ │ │ ├─ appointments.post.ts # POST idempotent
+│ │ │ │ ├─ communications.post.ts
+│ │ │ │ ├─ stage.patch.ts
+│ │ │ │ └─ webhook.post.ts # POST /events/webhook
+│ │ │ ├─ security/
+│ │ │ │ ├─ saml-oidc.ts # user SSO verification
+│ │ │ │ └─ oauth2.ts # service creds
+│ │ │ ├─ mappers/ # translate CQ schema ↔ internal
+│ │ │ └─ audit.ts
+│ │ └─ package.json
+│ ├─ comms-service/ # SMS/Email + consent + templates
+│ │ ├─ src/
+│ │ │ ├─ index.ts
+│ │ │ ├─ routes/
+│ │ │ │ ├─ send-sms.post.ts
+│ │ │ │ ├─ send-email.post.ts
+│ │ │ │ ├─ consent.post.ts # STOP/START/HELP handling
+│ │ │ │ └─ inbound-sms.post.ts # webhook from Twilio
+│ │ │ ├─ templates/ # handlebars/eta templates
+│ │ │ ├─ providers/ # twilio/sendgrid adapters
+│ │ │ └─ audit.ts
+│ │ └─ package.json
+│ ├─ scheduler-service/ # slot suggestion, reminders, SLAs
+│ │ ├─ src/
+│ │ │ ├─ index.ts
+│ │ │ ├─ jobs/
+│ │ │ │ ├─ confirm-reminders.ts # 24h/1h cadence
+│ │ │ │ ├─ reschedule-offers.ts
+│ │ │ │ └─ nightly-reconcile.ts
+│ │ │ ├─ rules/ # SLA, windowing, buffers
+│ │ │ └─ repo/
+│ │ └─ package.json
+│ ├─ routing-service/ # route optimization + weather
+│ │ ├─ src/
+│ │ │ ├─ index.ts
+│ │ │ ├─ providers/ # mapbox/google/osrm/weather
+│ │ │ └─ routes/post-optimize.ts
+│ │ └─ package.json
+│ ├─ webhook-service/ # receives CQ + comms events → bus
+│ ├─ metrics-service/ # exposes Prom metrics; aggregates KPIs
+│ └─ worker/ # BullMQ worker for queues
+│ ├─ src/
+│ │ ├─ index.ts
+│ │ └─ processors/
+│ │ ├─ outbound-comm.ts
+│ │ ├─ cq-sync.ts
+│ │ └─ audit-write.ts
+│ └─ package.json
+└─ README.md
