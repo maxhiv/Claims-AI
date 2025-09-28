@@ -1,9 +1,18 @@
 export type ClaimStage = 'Intake'|'Inspection Scheduled'|'Inspection Complete'|'Estimate Written'|'Carrier Approval Pending'|'Closed';
+export type SeverityLevel = 'critical' | 'urgent' | 'standard';
+
 export type Claim = {
   id: string; claimNumber: string; policyNumber?: string; carrier?: string;
   insured: { name: string; phone?: string; email?: string; language?: string };
   lossLocation: { address: string; lat?: number; lng?: number };
   peril?: string; slaDue?: string; adjusterId: string; stage: ClaimStage;
+  // AI-enhanced fields
+  severityLevel?: SeverityLevel;
+  priorityScore?: number;
+  requiresImmediateResponse?: boolean;
+  incidentDate?: string;
+  damageEstimate?: number;
+  authoritiesContacted?: boolean;
 };
 export type Appointment = {
   id: string; claimId: string; start: string; end: string;

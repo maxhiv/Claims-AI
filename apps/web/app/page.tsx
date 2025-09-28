@@ -17,7 +17,7 @@ interface CalendarAppointment {
   title: string;
   start: string;
   end: string;
-  status: string;
+  status: 'confirmed' | 'pending' | 'canceled';
 }
 
 interface AppointmentCardData {
@@ -25,7 +25,7 @@ interface AppointmentCardData {
   date: string;
   time: string;
   location: string;
-  status: string;
+  status: 'confirmed' | 'pending' | 'canceled';
   claimNumber: string;
   policyNumber: string;
   carrier: string;
@@ -136,7 +136,13 @@ export default function Page() {
       <OfflineBanner />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Adjuster Scheduler Dashboard</h1>
-        <nav className="flex gap-4 text-sm">
+        <nav className="flex gap-4 items-center text-sm">
+          <Link 
+            href="/claims/intake"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+          >
+            🆕 New Claim Intake
+          </Link>
           <Link className="underline" href="/templates">Templates</Link>
           <Link className="underline" href="/claims/CLM-2025-001184">Claim example</Link>
         </nav>
