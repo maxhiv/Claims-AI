@@ -142,10 +142,6 @@ externalPort = 8008
 localPort = 8099
 externalPort = 8099
 
-[[ports]]
-localPort = 40783
-externalPort = 3001
-
 [deployment]
 deploymentTarget = "autoscale"
 run = ["bash", "-c", "cd apps/web && npm run start"]

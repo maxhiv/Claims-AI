@@ -1,0 +1,69 @@
+property-loss-form
+
+Policy 
+*Policy Number  *Policy Name *Policy Effective Date 
+*Policy Expiration Date     
+
+Incident Information 
+*Did the incident occur on the Insured premises? Address 1 Address 2 
+City *State Zip 
+County Country   
+Was the location inspected immediately after the incident? Were any photos taken? Is there mortgage on the property? 
+First Name Last or Company Name  
+*Provide a brief description of the incident 
+Cause of Loss  If Other, please describe *Category of Loss 
+If Other, please describe 
+Describe the Damage (if burglary or robbery include what was stolen) Estimate of the damage ($) 
+Were authorities contacted? Was the suspect apprehended? Is the insured the cargo owner? 
+First Name Last or Company Name Address 1 
+Address 2 City State 
+Zip  County  Country 
+Telephone Number Extn  
+Driver's License Number Driver's License State License Plate Number 
+License Plate State 
+What is the best time of contact From/To? What are the best days to contact you? 
+
+Property First Notice of Loss Questions 
+Mandatory questions are marked with an asterisk * 
+
+Initial Information 
+*Is this a Notice Only Claim? *Date of Incident Time of Incident 
+Date Insured Notified *Incident State *Insured Name 
+*Location Name 
+Business Location 
+*Address 1 Address 2 
+*City *State *Zip 
+*County Country 
+Telephone Number Extn Fax Number 
+Is the mailing address the same? Address 1 Address 2 
+City State Zip 
+County Country Federal ID Number 
+Location Code Level 1 
+Location Code 
+Location Code Level 2 Location Code Level 3 
+Location Code Level 4 Location Code Level 5 Location Code Level 6 
+
+Emergency Services 
+Were authorities contacted? 
+Which authority was contacted?  (Police, Fire, Other) 
+Police Authority Name (Police) Report Number (Police) Violations/Citations 
+(Fire) Authority Name (Fire) Report Number (Fire )Violations/Citations 
+(Other) Name (Other) Telephone Number 
+
+Witness 
+Were there any Witnesses to the incident? 
+First Name Last Name Address 1 
+Address 2 City State 
+Zip County Country 
+Telephone Number Extn 
+
+Report Information 
+*Date Reported *Reported by First Name *Reported by Last Name 
+*Job Title *Phone Number *Email Address 
+*Are you the contact for this incident? First Name Last Name 
+Business Phone Number Cell Number Fax Number 
+Email Address 
+What is the best time of contact From/To? 
+What are the best days to contact you? 
+What is your preferred method of contact?  
+Do you have any additional comments regarding this incident?
