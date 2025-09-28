@@ -127,7 +127,7 @@ fastify.post('/inbound-sms', async (req, reply) => ({ status: 'received' }));
 // Start server
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || '8001');
+    const port = parseInt(process.env.PORT || '8008');
     await fastify.listen({ port, host: '0.0.0.0' });
     console.log(`Communications service listening on port ${port}`);
   } catch (err) {

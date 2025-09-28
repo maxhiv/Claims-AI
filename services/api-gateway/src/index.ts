@@ -1,8 +1,9 @@
 import Fastify from 'fastify';
 import pg from 'pg';
 import { randomUUID } from 'crypto';
-import { registerCommunicationRoutes } from './communication';
-import { registerAISchedulerRoutes } from './ai-scheduler';
+import { registerMicroserviceRoutes } from './microservice-routes.js';
+import { registerCommunicationRoutes } from './communication.js';
+import { registerAISchedulerRoutes } from './ai-scheduler.js';
 
 const { Pool } = pg;
 
@@ -249,16 +250,11 @@ app.patch('/api/claims/:claimId/stage', async (req, reply) => {
   }
 });
 
-// Register communication routes
-registerCommunicationRoutes(app);
+// Register microservice proxy routes (new architecture)
+registerMicroserviceRoutes(app);
 
-// Register AI scheduler routes
-registerAISchedulerRoutes(app);
-
-// POST /api/routing/optimize - optimize route (keep stub for now)
-app.post('/api/routing/optimize', async (req, reply) => {
-  return { route: { summary: 'stub' } };
-});
+// Note: Legacy routes removed to avoid conflicts - microservices now handle these endpoints
+// Legacy communication and AI scheduler functionality now handled by microservices
 
 const port = Number(process.env.PORT || 8000);
 app.listen({ port, host: '0.0.0.0' }).catch((err) => {

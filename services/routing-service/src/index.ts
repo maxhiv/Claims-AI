@@ -160,7 +160,7 @@ fastify.post('/batch-geocode', async (request, reply) => {
 // Start server
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || '8002');
+    const port = parseInt(process.env.PORT || '8099');
     await fastify.listen({ port, host: '0.0.0.0' });
     console.log(`Routing service listening on port ${port}`);
   } catch (err) {
