@@ -9,6 +9,7 @@
     "start": "pnpm -r --parallel start"
   },
   "dependencies": {
-    "@sendgrid/mail": "^8.1.6"
+    "@sendgrid/mail": "^8.1.6",
+    "openai": "^5.23.1"
   }
 }
