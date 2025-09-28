@@ -34,7 +34,7 @@ export default function TemplatesPage() {
 
   const chips = useMemo(() => MERGE_FIELDS.map(mf => (
     <span key={mf} className="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs mr-2 mb-2 inline-block">
-      {{}}{`{{${mf}}}`}
+      {`{{${mf}}}`}
     </span>
   )), []);
 
