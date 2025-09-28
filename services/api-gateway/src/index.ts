@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import pg from 'pg';
 import { randomUUID } from 'crypto';
 import { registerCommunicationRoutes } from './communication';
+import { registerAISchedulerRoutes } from './ai-scheduler';
 
 const { Pool } = pg;
 
@@ -250,6 +251,9 @@ app.patch('/api/claims/:claimId/stage', async (req, reply) => {
 
 // Register communication routes
 registerCommunicationRoutes(app);
+
+// Register AI scheduler routes
+registerAISchedulerRoutes(app);
 
 // POST /api/routing/optimize - optimize route (keep stub for now)
 app.post('/api/routing/optimize', async (req, reply) => {
