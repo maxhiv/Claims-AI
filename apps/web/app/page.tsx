@@ -58,7 +58,7 @@ export default function Page() {
         const cards: ClaimCardData[] = [];
         
         // Fetch appointments for ALL claims in parallel for better performance
-        const appointmentPromises = claims.map(claim => 
+        const appointmentPromises = claims.map((claim: any) => 
           listAppointments(claim.id)
             .then(result => ({ claim, appointments: result.appointments }))
             .catch(error => {
@@ -162,87 +162,132 @@ export default function Page() {
   }
 
   return (
-    <main className="p-6 max-w-6xl mx-auto space-y-4">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <OfflineBanner />
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Adjuster Scheduler Dashboard</h1>
-        <nav className="flex gap-4 items-center text-sm">
-          <Link 
-            href="/kanban"
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 text-sm font-medium"
-          >
-            📋 Kanban View
-          </Link>
-          <Link 
-            href="/claims/intake"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 text-sm font-medium"
-          >
-            🆕 New Claim Intake
-          </Link>
-          <Link className="underline" href="/templates">Templates</Link>
-          <Link className="underline" href="/claims/CLM-2025-001184">Claim example</Link>
-        </nav>
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                Smart Adjuster Dashboard
+              </h1>
+              <p className="text-slate-300 mt-2 text-lg">Intelligent workflow management for field adjusters</p>
+            </div>
+            <nav className="flex gap-3 items-center">
+              <Link 
+                href="/kanban"
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 focus:ring-2 focus:ring-purple-500 text-sm font-semibold shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 0v10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2z" />
+                  </svg>
+                  Kanban View
+                </span>
+              </Link>
+              <Link 
+                href="/claims/intake"
+                className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 focus:ring-2 focus:ring-emerald-500 text-sm font-semibold shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  New Claim
+                </span>
+              </Link>
+              <div className="flex gap-4 ml-4">
+                <Link className="text-slate-300 hover:text-white transition-colors text-sm" href="/templates">Templates</Link>
+                <Link className="text-slate-300 hover:text-white transition-colors text-sm" href="/claims/CLM-2025-001184">Example</Link>
+              </div>
+            </nav>
+          </div>
+        </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <AppointmentCalendar items={allAppointments} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {claimCards.map((card: ClaimCardData, index: number) => (
               <div
                 key={index}
-                className={`p-6 rounded-xl border-2 ${
+                className={`p-6 rounded-2xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
                   card.hasAppointment 
                     ? card.appointmentStatus === 'confirmed' 
-                      ? 'border-green-200 bg-green-50' 
-                      : 'border-yellow-200 bg-yellow-50'
-                    : 'border-gray-200 bg-gray-50'
+                      ? 'bg-gradient-to-br from-emerald-50 to-green-50 shadow-md border border-emerald-200/50' 
+                      : 'bg-gradient-to-br from-amber-50 to-yellow-50 shadow-md border border-amber-200/50'
+                    : 'bg-gradient-to-br from-slate-50 to-gray-50 shadow-md border border-slate-200/50'
                 }`}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-lg">{card.name}</h3>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-bold text-xl text-slate-800">{card.name}</h3>
+                  <span className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm ${
                     card.hasAppointment
-                      ? card.appointmentStatus === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                      : 'bg-gray-100 text-gray-800'
+                      ? card.appointmentStatus === 'confirmed' 
+                        ? 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200' 
+                        : 'bg-amber-100 text-amber-800 ring-1 ring-amber-200'
+                      : 'bg-slate-100 text-slate-700 ring-1 ring-slate-200'
                   }`}>
-                    {card.hasAppointment ? card.appointmentStatus : card.stage}
+                    {card.hasAppointment ? card.appointmentStatus?.toUpperCase() : card.stage}
                   </span>
                 </div>
                 
-                <div className="space-y-2 text-sm">
-                  <div><strong>Claim:</strong> {card.claimNumber}</div>
-                  <div><strong>Policy:</strong> {card.policyNumber}</div>
-                  <div><strong>Carrier:</strong> {card.carrier}</div>
-                  <div><strong>Peril:</strong> {card.peril}</div>
-                  <div><strong>Stage:</strong> {card.stage}</div>
+                <div className="space-y-3 text-sm">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="text-slate-600"><span className="font-semibold text-slate-700">Claim:</span> {card.claimNumber}</div>
+                    <div className="text-slate-600"><span className="font-semibold text-slate-700">Policy:</span> {card.policyNumber}</div>
+                    <div className="text-slate-600"><span className="font-semibold text-slate-700">Carrier:</span> {card.carrier}</div>
+                    <div className="text-slate-600"><span className="font-semibold text-slate-700">Peril:</span> {card.peril}</div>
+                  </div>
+                  <div className="text-slate-600"><span className="font-semibold text-slate-700">Stage:</span> {card.stage}</div>
                   
                   {card.hasAppointment ? (
-                    <div className="mt-4 p-3 bg-white rounded-lg">
-                      <div className="font-medium">📅 {card.appointmentDate} • {card.appointmentTime}</div>
-                      <div className="text-gray-600">{card.location}</div>
+                    <div className="mt-5 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 shadow-sm">
+                      <div className="flex items-center gap-2 font-semibold text-slate-700 mb-2">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                        {card.appointmentDate} • {card.appointmentTime}
+                      </div>
+                      <div className="text-slate-600 text-sm">{card.location}</div>
                     </div>
                   ) : (
-                    <div className="mt-4 p-3 bg-white rounded-lg">
-                      <div className="font-medium text-orange-600">⏳ Needs Scheduling</div>
-                      <div className="text-gray-600">{card.location}</div>
+                    <div className="mt-5 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 shadow-sm">
+                      <div className="flex items-center gap-2 font-semibold text-orange-600 mb-2">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                        Needs Scheduling
+                      </div>
+                      <div className="text-slate-600 text-sm mb-2">{card.location}</div>
                       {card.priorityScore && (
-                        <div className="text-sm mt-1">
-                          Priority: <span className={`font-medium ${
+                        <div className="flex items-center gap-2">
+                          <div className="text-xs text-slate-500">Priority:</div>
+                          <div className="flex-1 bg-slate-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full ${
+                                card.priorityScore >= 80 ? 'bg-red-500' : 
+                                card.priorityScore >= 60 ? 'bg-orange-500' : 'bg-green-500'
+                              }`}
+                              style={{ width: `${card.priorityScore}%` }}
+                            ></div>
+                          </div>
+                          <span className={`text-xs font-bold ${
                             card.priorityScore >= 80 ? 'text-red-600' : 
                             card.priorityScore >= 60 ? 'text-orange-600' : 'text-green-600'
-                          }`}>{card.priorityScore}/100</span>
+                          }`}>{card.priorityScore}</span>
                         </div>
                       )}
                     </div>
                   )}
                 </div>
                 
-                <div className="mt-4 flex gap-2">
-                  <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm hover:bg-blue-200">
+                <div className="mt-6 flex gap-3">
+                  <button className="flex-1 px-4 py-2.5 bg-slate-700 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors shadow-sm">
                     Open Claim
                   </button>
                   {!card.hasAppointment && (
-                    <button className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200">
+                    <button className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shadow-sm">
                       Schedule
                     </button>
                   )}
@@ -265,11 +310,12 @@ export default function Page() {
             )}
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-6">
           <RouteSummary legs={legs} />
           <CommsLog items={comms} />
           <TemplatePicker />
           <StageTracker stage={currentStage} />
+        </div>
         </div>
       </div>
     </main>
