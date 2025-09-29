@@ -1,13 +1,21 @@
 {
   "name": "ai-scheduler-monorepo",
   "private": true,
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@8.15.8",
   "scripts": {
     "dev": "pnpm -r --parallel dev",
-    "build": "pnpm -r --parallel build",
+    "build": "npm install && npm run build:workspaces",
+    "build:workspaces": "npm run build --workspaces --if-present",
+    "build:prod": "npm install && npm run build:workspaces",
     "lint": "pnpm -r --parallel lint",
-    "start": "pnpm -r --parallel start"
+    "start": "pnpm -r --parallel start",
+    "start:prod": "cd services/api-gateway && npm run start & cd apps/web && npm run start & wait"
   },
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
     "lucide-react": "^0.544.0",
