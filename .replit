@@ -143,7 +143,7 @@ localPort = 8099
 externalPort = 8099
 
 [[ports]]
-localPort = 41441
+localPort = 39191
 externalPort = 3001
 
 [deployment]
