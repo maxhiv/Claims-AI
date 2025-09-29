@@ -3,6 +3,53 @@
 import { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 
+interface HighlightOverlayProps {
+  element: HTMLElement;
+  stepNumber: number;
+}
+
+function HighlightOverlay({ element, stepNumber }: HighlightOverlayProps) {
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
+
+  useEffect(() => {
+    const updatePosition = () => {
+      const rect = element.getBoundingClientRect();
+      setPosition({
+        top: rect.top - 8,
+        left: rect.left - 8,
+        width: rect.width + 16,
+        height: rect.height + 16,
+      });
+    };
+
+    updatePosition();
+    
+    // Update position on scroll and resize to keep highlight aligned
+    const handleUpdate = () => {
+      requestAnimationFrame(updatePosition);
+    };
+    
+    window.addEventListener('scroll', handleUpdate);
+    window.addEventListener('resize', handleUpdate);
+    
+    return () => {
+      window.removeEventListener('scroll', handleUpdate);
+      window.removeEventListener('resize', handleUpdate);
+    };
+  }, [element]);
+
+  return (
+    <div
+      className="fixed z-50 border-4 border-blue-500 rounded-lg shadow-lg pointer-events-none transition-all duration-300"
+      style={position}
+    >
+      <div className="absolute -top-3 -left-3 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+        {stepNumber}
+      </div>
+    </div>
+  );
+}
+
 interface TutorialStep {
   id: string;
   title: string;
@@ -85,6 +132,7 @@ interface DashboardTutorialProps {
 export default function DashboardTutorial({ isOpen, onClose }: DashboardTutorialProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [highlightElement, setHighlightElement] = useState<HTMLElement | null>(null);
+  const [cardPosition, setCardPosition] = useState({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' });
 
   useEffect(() => {
     if (isOpen && currentStep < tutorialSteps.length) {
@@ -94,6 +142,27 @@ export default function DashboardTutorial({ isOpen, onClose }: DashboardTutorial
 
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Initial card position calculation
+        const updateCardPosition = () => {
+          const newPosition = getCardPosition(element, step.position);
+          setCardPosition(newPosition);
+        };
+        
+        updateCardPosition();
+        
+        // Update card position on scroll and resize
+        const handleUpdate = () => {
+          requestAnimationFrame(updateCardPosition);
+        };
+        
+        window.addEventListener('scroll', handleUpdate);
+        window.addEventListener('resize', handleUpdate);
+        
+        return () => {
+          window.removeEventListener('scroll', handleUpdate);
+          window.removeEventListener('resize', handleUpdate);
+        };
       }
     } else {
       setHighlightElement(null);
@@ -138,24 +207,12 @@ export default function DashboardTutorial({ isOpen, onClose }: DashboardTutorial
       
       {/* Highlight */}
       {highlightElement && (
-        <div
-          className="fixed z-50 border-4 border-blue-500 rounded-lg shadow-lg pointer-events-none"
-          style={{
-            top: highlightElement.offsetTop - 8,
-            left: highlightElement.offsetLeft - 8,
-            width: highlightElement.offsetWidth + 16,
-            height: highlightElement.offsetHeight + 16,
-          }}
-        >
-          <div className="absolute -top-3 -left-3 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-            {currentStep + 1}
-          </div>
-        </div>
+        <HighlightOverlay element={highlightElement} stepNumber={currentStep + 1} />
       )}
 
       {/* Tutorial Card */}
-      <div className="fixed z-50 bg-white rounded-xl shadow-2xl border max-w-md mx-4" 
-           style={getCardPosition(highlightElement, step.position)}>
+      <div className="fixed z-50 bg-white rounded-xl shadow-2xl border max-w-md mx-4 transition-all duration-300" 
+           style={cardPosition}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -228,27 +285,31 @@ function getCardPosition(element: HTMLElement | null, position: string) {
   const cardWidth = 384; // max-w-md = 384px
   const cardHeight = 300; // approximate
   const spacing = 20;
+  
+  // Ensure card stays within viewport bounds
+  const maxTop = Math.max(16, window.innerHeight - cardHeight - 16);
+  const maxLeft = Math.max(16, window.innerWidth - cardWidth - 16);
 
   switch (position) {
     case 'top':
       return {
-        top: rect.top - cardHeight - spacing,
-        left: Math.max(16, Math.min(window.innerWidth - cardWidth - 16, rect.left + rect.width / 2 - cardWidth / 2)),
+        top: Math.max(16, rect.top - cardHeight - spacing),
+        left: Math.max(16, Math.min(maxLeft, rect.left + rect.width / 2 - cardWidth / 2)),
       };
     case 'bottom':
       return {
-        top: rect.bottom + spacing,
-        left: Math.max(16, Math.min(window.innerWidth - cardWidth - 16, rect.left + rect.width / 2 - cardWidth / 2)),
+        top: Math.min(maxTop, rect.bottom + spacing),
+        left: Math.max(16, Math.min(maxLeft, rect.left + rect.width / 2 - cardWidth / 2)),
       };
     case 'left':
       return {
-        top: Math.max(16, rect.top + rect.height / 2 - cardHeight / 2),
-        left: rect.left - cardWidth - spacing,
+        top: Math.max(16, Math.min(maxTop, rect.top + rect.height / 2 - cardHeight / 2)),
+        left: Math.max(16, rect.left - cardWidth - spacing),
       };
     case 'right':
       return {
-        top: Math.max(16, rect.top + rect.height / 2 - cardHeight / 2),
-        left: rect.right + spacing,
+        top: Math.max(16, Math.min(maxTop, rect.top + rect.height / 2 - cardHeight / 2)),
+        left: Math.min(maxLeft, rect.right + spacing),
       };
     default:
       return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };

@@ -44,7 +44,7 @@ export default function KanbanPage() {
         const cards: ClaimCardData[] = [];
         
         // Fetch appointments for ALL claims in parallel for better performance
-        const appointmentPromises = claims.map(claim => 
+        const appointmentPromises = claims.map((claim: any) => 
           listAppointments(claim.id)
             .then(result => ({ claim, appointments: result.appointments }))
             .catch(error => {
