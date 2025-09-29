@@ -33,7 +33,7 @@ export async function requestJSON(
     console.log(`[DRY_RUN] Would request ${url}`, { headers, body });
     
     // Return realistic stubs based on URL to ensure geometry is present
-    let mockBody = { message: 'DRY_RUN: Request simulated successfully' };
+    let mockBody: any = { message: 'DRY_RUN: Request simulated successfully' };
     
     // Mock Geoapify routing response with geometry
     if (url.includes('api.geoapify.com') && url.includes('routing')) {

@@ -38,7 +38,7 @@ export async function httpRequest(
     console.log(`[DRY_RUN] Would request ${url}`, { headers, body });
     
     // Return realistic stubs based on URL
-    let mockBody = { message: 'DRY_RUN: Request simulated successfully' };
+    let mockBody: any = { message: 'DRY_RUN: Request simulated successfully' };
     
     // Mock Calendarific holidays response
     if (url.includes('calendarific.com') && url.includes('holidays')) {
@@ -130,7 +130,7 @@ export async function httpRequest(
     requestHeaders['Idempotency-Key'] = options.idempotencyKey;
   }
 
-  let lastError: Error;
+  let lastError: Error = new Error('Request failed');
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
@@ -176,7 +176,7 @@ export async function httpRequest(
       lastError = error instanceof Error ? error : new Error(String(error));
       
       // Don't retry on client errors or timeout
-      if (error.name === 'AbortError' || lastError.message.includes('4')) {
+      if ((error as any)?.name === 'AbortError' || (lastError as any)?.message?.includes('4')) {
         break;
       }
       
