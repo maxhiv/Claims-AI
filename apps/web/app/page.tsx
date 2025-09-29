@@ -41,9 +41,81 @@ export default function Page() {
   const [claimCards, setClaimCards] = useState<ClaimCardData[]>([]);
   const [currentStage, setCurrentStage] = useState('Inspection Scheduled');
   const [isLoading, setIsLoading] = useState(true);
+  const [legs, setLegs] = useState<{ from: string; to: string; driveTime: string }[]>([]);
   
   // Fetch real data from the API
   const adjusterId = 'a1234567-e89b-12d3-a456-426614174000'; // Sample adjuster ID
+  
+  // Optimize route from appointment locations
+  const optimizeRoute = async (appointments: CalendarAppointment[]) => {
+    if (appointments.length < 2) {
+      setLegs([]);
+      return;
+    }
+
+    try {
+      // Extract unique locations from scheduled appointments
+      const waypoints = appointments.map((apt, index) => {
+        // Extract the location from the title (format: "Name • Location")
+        const location = apt.title.split(' • ')[1] || 'Unknown';
+        return {
+          id: `apt_${index}`,
+          lat: Math.random() * 2 + 30.3, // Temporary: will get from claim data
+          lng: Math.random() * 2 - 87.6, // Temporary: will get from claim data  
+          address: location,
+          name: location
+        };
+      });
+
+      const response = await fetch('/api/proxy/routing/optimize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          waypoints,
+          constraints: {
+            optimization_mode: 'time',
+            traffic: true
+          }
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        if (result.success && result.routes) {
+          // Convert optimized route to legs format
+          const optimizedLegs = result.routes.map((route: any) => ({
+            from: waypoints[route.fromWaypointIndex]?.name || 'Unknown',
+            to: waypoints[route.toWaypointIndex]?.name || 'Unknown',
+            driveTime: `${Math.round(route.duration || 0)}m`
+          }));
+          
+          setLegs(optimizedLegs);
+        }
+      } else {
+        console.warn('Route optimization failed, using fallback');
+        // Fallback to simple sequential route
+        if (appointments.length >= 2) {
+          const fallbackLegs = [];
+          for (let i = 0; i < appointments.length - 1; i++) {
+            const from = appointments[i].title.split(' • ')[1] || 'Unknown';
+            const to = appointments[i + 1].title.split(' • ')[1] || 'Unknown';
+            fallbackLegs.push({
+              from,
+              to, 
+              driveTime: '25m' // Estimated fallback
+            });
+          }
+          setLegs(fallbackLegs);
+        }
+      }
+    } catch (error) {
+      console.error('Route optimization error:', error);
+      setLegs([]);
+    }
+  };
   
   useEffect(() => {
     const fetchData = async () => {
@@ -132,6 +204,9 @@ export default function Page() {
         if (claims.length > 0) {
           setCurrentStage(claims[0].stage);
         }
+        
+        // Automatically optimize route when appointments are loaded
+        await optimizeRoute(appointments);
       } catch (error) {
         console.error('Failed to fetch claims or appointments:', error);
         // Fall back to empty data if API fails
@@ -145,7 +220,6 @@ export default function Page() {
     fetchData();
   }, [adjusterId]);
 
-  const legs = [{ from: 'Daphne', to: 'Fairhope', driveTime: '22m' }, { from: 'Fairhope', to: 'Mobile', driveTime: '41m' }];
   const comms = [{ id:'1', ts:new Date().toISOString(), who:'System', channel:'sms' as const, preview:'Reminder sent (24h)'}];
 
   if (isLoading) {
