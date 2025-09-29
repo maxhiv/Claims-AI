@@ -3,52 +3,6 @@
 import { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 
-interface HighlightOverlayProps {
-  element: HTMLElement;
-  stepNumber: number;
-}
-
-function HighlightOverlay({ element, stepNumber }: HighlightOverlayProps) {
-  const [position, setPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
-
-  useEffect(() => {
-    const updatePosition = () => {
-      const rect = element.getBoundingClientRect();
-      setPosition({
-        top: rect.top - 8,
-        left: rect.left - 8,
-        width: rect.width + 16,
-        height: rect.height + 16,
-      });
-    };
-
-    updatePosition();
-    
-    // Update position on scroll and resize to keep highlight aligned
-    const handleUpdate = () => {
-      requestAnimationFrame(updatePosition);
-    };
-    
-    window.addEventListener('scroll', handleUpdate);
-    window.addEventListener('resize', handleUpdate);
-    
-    return () => {
-      window.removeEventListener('scroll', handleUpdate);
-      window.removeEventListener('resize', handleUpdate);
-    };
-  }, [element]);
-
-  return (
-    <div
-      className="fixed z-50 border-4 border-blue-500 rounded-lg shadow-lg pointer-events-none transition-all duration-300"
-      style={position}
-    >
-      <div className="absolute -top-3 -left-3 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-        {stepNumber}
-      </div>
-    </div>
-  );
-}
 
 interface TutorialStep {
   id: string;
@@ -124,6 +78,53 @@ const tutorialSteps: TutorialStep[] = [
   }
 ];
 
+interface HighlightOverlayProps {
+  element: HTMLElement;
+  stepNumber: number;
+}
+
+function HighlightOverlay({ element, stepNumber }: HighlightOverlayProps) {
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
+
+  useEffect(() => {
+    const updatePosition = () => {
+      const rect = element.getBoundingClientRect();
+      setPosition({
+        top: rect.top - 8,
+        left: rect.left - 8,
+        width: rect.width + 16,
+        height: rect.height + 16,
+      });
+    };
+
+    updatePosition();
+    
+    // Update position on scroll and resize to keep highlight aligned
+    const handleUpdate = () => {
+      requestAnimationFrame(updatePosition);
+    };
+    
+    window.addEventListener('scroll', handleUpdate);
+    window.addEventListener('resize', handleUpdate);
+    
+    return () => {
+      window.removeEventListener('scroll', handleUpdate);
+      window.removeEventListener('resize', handleUpdate);
+    };
+  }, [element]);
+
+  return (
+    <div
+      className="fixed z-50 border-4 border-blue-500 rounded-lg shadow-lg pointer-events-none transition-all duration-300"
+      style={position}
+    >
+      <div className="absolute -top-3 -left-3 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+        {stepNumber}
+      </div>
+    </div>
+  );
+}
+
 interface DashboardTutorialProps {
   isOpen: boolean;
   onClose: () => void;
@@ -132,7 +133,7 @@ interface DashboardTutorialProps {
 export default function DashboardTutorial({ isOpen, onClose }: DashboardTutorialProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [highlightElement, setHighlightElement] = useState<HTMLElement | null>(null);
-  const [cardPosition, setCardPosition] = useState({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' });
+  const [cardPosition, setCardPosition] = useState<{ top: string | number; left: string | number; transform?: string }>({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' });
 
   useEffect(() => {
     if (isOpen && currentStep < tutorialSteps.length) {

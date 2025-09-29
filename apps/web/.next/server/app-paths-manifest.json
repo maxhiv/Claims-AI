@@ -1,5 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/kanban/page": "app/kanban/page.js"
+  "/api/proxy/claims/assignments/route": "app/api/proxy/claims/assignments/route.js",
+  "/api/proxy/claims/[claimId]/appointments/route": "app/api/proxy/claims/[claimId]/appointments/route.js",
+  "/api/proxy/routing/optimize/route": "app/api/proxy/routing/optimize/route.js"
 }
