@@ -150,8 +150,8 @@ app.get('/api/claims/assignments', async (req, reply) => {
     }));
 
     return { claims };
-  } catch (error) {
-    app.log.error('Error fetching claims assignments:', error);
+  } catch (error: unknown) {
+    app.log.error(`Error fetching claims assignments: ${error instanceof Error ? error.message : 'Unknown error'}`);
     return reply.status(500).send({ error: 'Internal server error' });
   }
 });
@@ -190,8 +190,8 @@ app.get('/api/claims/:claimId/appointments', async (req, reply) => {
     }));
 
     return { appointments };
-  } catch (error) {
-    app.log.error('Error fetching appointments:', error);
+  } catch (error: unknown) {
+    app.log.error(`Error fetching appointments: ${error instanceof Error ? error.message : 'Unknown error'}`);
     return reply.status(500).send({ error: 'Internal server error' });
   }
 });
@@ -312,8 +312,8 @@ app.post('/api/claims', async (req, reply) => {
       try {
         await triggerSchedulerForClaim(newClaim);
         app.log.info(`Successfully triggered scheduler for claim: ${newClaim.claim_number}`);
-      } catch (schedError) {
-        app.log.error('Failed to trigger scheduler for claim:', schedError);
+      } catch (schedError: unknown) {
+        app.log.error(`Failed to trigger scheduler for claim: ${schedError instanceof Error ? schedError.message : 'Unknown error'}`);
         // Don't fail claim creation if scheduler fails, but log the error
       }
     } else {
@@ -321,9 +321,9 @@ app.post('/api/claims', async (req, reply) => {
     }
 
     return { success: true, claim };
-  } catch (error) {
-    app.log.error('Error creating claim:', error);
-    return reply.status(500).send({ error: 'Internal server error', details: error.message });
+  } catch (error: unknown) {
+    app.log.error(`Error creating claim: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    return reply.status(500).send({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' });
   }
 });
 
@@ -383,8 +383,8 @@ app.post('/api/claims/:claimId/appointments', async (req, reply) => {
     ]);
 
     return { status: 'upserted', id: result.rows[0].id };
-  } catch (error) {
-    app.log.error('Error upserting appointment:', error);
+  } catch (error: unknown) {
+    app.log.error(`Error upserting appointment: ${error instanceof Error ? error.message : 'Unknown error'}`);
     return reply.status(500).send({ error: 'Internal server error' });
   }
 });
@@ -428,8 +428,8 @@ app.post('/api/claims/:claimId/communications', async (req, reply) => {
     ]);
 
     return { status: 'accepted', id: communicationId };
-  } catch (error) {
-    app.log.error('Error logging communication:', error);
+  } catch (error: unknown) {
+    app.log.error(`Error logging communication: ${error instanceof Error ? error.message : 'Unknown error'}`);
     return reply.status(500).send({ error: 'Internal server error' });
   }
 });
@@ -452,8 +452,8 @@ app.patch('/api/claims/:claimId/stage', async (req, reply) => {
     `, [stage, new Date().toISOString(), claimId]);
 
     return { status: 'updated' };
-  } catch (error) {
-    app.log.error('Error updating claim stage:', error);
+  } catch (error: unknown) {
+    app.log.error(`Error updating claim stage: ${error instanceof Error ? error.message : 'Unknown error'}`);
     return reply.status(500).send({ error: 'Internal server error' });
   }
 });

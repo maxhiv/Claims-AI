@@ -170,8 +170,8 @@ export function registerAISchedulerRoutes(app: FastifyInstance) {
         }
       };
 
-    } catch (error) {
-      app.log.error('Error generating AI scheduling suggestions:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error generating AI scheduling suggestions: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Failed to generate suggestions' });
     }
   });
@@ -250,8 +250,8 @@ export function registerAISchedulerRoutes(app: FastifyInstance) {
 
       return analysis;
 
-    } catch (error) {
-      app.log.error('Error analyzing schedule conflicts:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error analyzing schedule conflicts: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Failed to analyze conflicts' });
     }
   });
@@ -300,8 +300,8 @@ export function registerAISchedulerRoutes(app: FastifyInstance) {
         }
       };
 
-    } catch (error) {
-      app.log.error('Error optimizing route:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error optimizing route: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Failed to optimize route' });
     }
   });

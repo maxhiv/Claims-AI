@@ -1,9 +1,38 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from './ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
+// Simple UI components  
+const Button = ({ onClick, children, className = '', variant = 'default', size = 'default', disabled = false }: any) => (
+  <button 
+    onClick={onClick}
+    disabled={disabled}
+    className={`px-4 py-2 rounded ${size === 'sm' ? 'px-2 py-1 text-sm' : ''} ${variant === 'outline' ? 'border border-gray-300' : 'bg-blue-500 text-white'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+  >
+    {children}
+  </button>
+);
+
+const Card = ({ children, className = '' }: any) => (
+  <div className={`bg-white shadow-md rounded-lg ${className}`}>{children}</div>
+);
+
+const CardHeader = ({ children }: any) => (
+  <div className="px-6 py-4 border-b border-gray-200">{children}</div>
+);
+
+const CardTitle = ({ children }: any) => (
+  <h3 className="text-lg font-semibold">{children}</h3>
+);
+
+const CardContent = ({ children }: any) => (
+  <div className="px-6 py-4">{children}</div>
+);
+
+const Badge = ({ children, className = '', variant = 'default' }: any) => (
+  <span className={`inline-block px-2 py-1 text-xs rounded ${variant === 'outline' ? 'border border-gray-300' : 'bg-gray-100'} ${className}`}>
+    {children}
+  </span>
+);
 import { 
   Mail, 
   MessageSquare, 

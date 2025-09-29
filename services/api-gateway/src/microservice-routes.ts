@@ -4,6 +4,45 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { commsService, routingService, cqService, schedulerService } from './service-client.js';
 import pg from 'pg';
 
+// Type definitions for request bodies
+interface SendEmailRequest {
+  type: string;
+  appointmentId: string;
+  fromEmail: string;
+}
+
+interface SendSMSRequest {
+  appointmentId: string;
+  message: string;
+  to: string;
+}
+
+interface DetectLanguageRequest {
+  text: string;
+}
+
+interface GeocodeRequest {
+  address: string;
+}
+
+interface ScheduleRequest {
+  adjusterId?: string;
+  date?: string;
+  constraints?: any;
+}
+
+type EmailTemplate = {
+  subject: string;
+  text: string;
+  html: string;
+};
+
+type EmailTemplates = {
+  confirmation: EmailTemplate;
+  reminder: EmailTemplate;
+  cancellation: EmailTemplate;
+};
+
 const { Pool } = pg;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -16,7 +55,7 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
   // POST /api/communications/send-email - Enhanced email with microservice
   app.post('/api/communications/send-email', async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { type, appointmentId, fromEmail } = req.body as any;
+      const { type, appointmentId, fromEmail } = req.body as SendEmailRequest;
 
       // Get appointment and claim details (keep existing database logic)
       const result = await pool.query(`
@@ -67,8 +106,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
 
       return { status: 'sent', message: `${type} email sent successfully` };
 
-    } catch (error) {
-      app.log.error('Error sending email via microservice:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error sending email via microservice: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -76,7 +115,7 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
   // POST /api/communications/send-sms - New SMS capability
   app.post('/api/communications/send-sms', async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { appointmentId, message, to } = req.body as any;
+      const { appointmentId, message, to } = req.body as SendSMSRequest;
 
       const response = await commsService.sendSMS({
         to,
@@ -100,8 +139,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
 
       return { status: 'sent', messageId: response.data?.messageId };
 
-    } catch (error) {
-      app.log.error('Error sending SMS:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error sending SMS: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -109,7 +148,7 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
   // POST /api/communications/detect-language - Language detection
   app.post('/api/communications/detect-language', async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { text } = req.body as any;
+      const { text } = req.body as DetectLanguageRequest;
 
       const response = await commsService.detectLanguage({ text });
 
@@ -119,8 +158,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
 
       return response.data;
 
-    } catch (error) {
-      app.log.error('Error detecting language:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error detecting language: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -137,8 +176,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error geocoding address:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error geocoding address: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -153,8 +192,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error optimizing route:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error optimizing route: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -169,8 +208,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error calculating route:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error calculating route: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -187,8 +226,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error verifying address:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error verifying address: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -203,8 +242,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error getting address suggestions:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error getting address suggestions: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -221,8 +260,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error generating schedule:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error generating schedule: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -237,8 +276,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error finding available slots:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error finding available slots: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -253,8 +292,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error getting holidays:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error getting holidays: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -269,8 +308,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       }
       
       return response.data;
-    } catch (error) {
-      app.log.error('Error getting timezone:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error getting timezone: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -300,8 +339,8 @@ export function registerMicroserviceRoutes(app: FastifyInstance) {
       
       return reply.status(anyUnhealthy ? 503 : 200).send(healthStatus);
 
-    } catch (error) {
-      app.log.error('Error checking service health:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error checking service health: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Health check failed' });
     }
   });
@@ -322,7 +361,7 @@ function formatAppointmentEmail(type: string, appointmentData: any) {
     hour12: true 
   });
 
-  const templates = {
+  const templates: EmailTemplates = {
     confirmation: {
       subject: `Appointment Confirmation - Claim ${appointmentData.claim_number}`,
       text: `Hello ${appointmentData.insured_name},\n\nYour inspection appointment has been confirmed for ${date} at ${time}.\n\nLocation: ${appointmentData.address}\nClaim Number: ${appointmentData.claim_number}\nAdjuster: ${appointmentData.adjuster_name}\n\nPlease be available at the scheduled time. If you need to reschedule, please contact us.\n\nThank you.`,
@@ -340,5 +379,5 @@ function formatAppointmentEmail(type: string, appointmentData: any) {
     }
   };
 
-  return templates[type] || templates.confirmation;
+  return templates[type as keyof EmailTemplates] || templates.confirmation;
 }

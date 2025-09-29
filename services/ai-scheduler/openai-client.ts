@@ -196,7 +196,11 @@ Respond with valid JSON matching this structure:
     console.log('OpenAI API call successful');
     console.log('Response:', response.choices[0].message.content);
 
-    const result = JSON.parse(response.choices[0].message.content);
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content received from OpenAI');
+    }
+    const result = JSON.parse(content);
     return result.suggestions || [];
 
   } catch (error) {
@@ -269,7 +273,11 @@ Identify conflicts and provide suggestions. Respond with JSON:
       response_format: { type: "json_object" }
     });
 
-    return JSON.parse(response.choices[0].message.content);
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content received from OpenAI');
+    }
+    return JSON.parse(content);
 
   } catch (error) {
     console.error('Error analyzing schedule conflicts:', error);
@@ -342,7 +350,11 @@ Calculate optimal route order and provide travel estimates. Respond with JSON:
       response_format: { type: "json_object" }
     });
 
-    return JSON.parse(response.choices[0].message.content);
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content received from OpenAI');
+    }
+    return JSON.parse(content);
 
   } catch (error) {
     console.error('Error optimizing geographic clustering:', error);

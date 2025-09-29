@@ -71,8 +71,8 @@ export async function callService<T = any>(
       data: responseData
     };
 
-  } catch (error) {
-    if (error.name === 'AbortError') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'AbortError') {
       return {
         success: false,
         error: `Service ${serviceName} timeout after ${timeout}ms`

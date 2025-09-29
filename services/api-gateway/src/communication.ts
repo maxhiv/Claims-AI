@@ -98,8 +98,8 @@ export function registerCommunicationRoutes(app: FastifyInstance) {
         return reply.status(500).send({ error: 'Failed to send email' });
       }
 
-    } catch (error) {
-      app.log.error('Error sending email:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error sending email: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -126,8 +126,8 @@ export function registerCommunicationRoutes(app: FastifyInstance) {
 
       return { status: 'logged' };
 
-    } catch (error) {
-      app.log.error('Error logging communication:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error logging communication: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -156,8 +156,8 @@ export function registerCommunicationRoutes(app: FastifyInstance) {
 
       return { communications };
 
-    } catch (error) {
-      app.log.error('Error fetching communication history:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error fetching communication history: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
@@ -250,8 +250,8 @@ export function registerCommunicationRoutes(app: FastifyInstance) {
             });
           }
 
-        } catch (error) {
-          app.log.error(`Error sending reminder for appointment ${row.id}:`, error);
+        } catch (error: unknown) {
+          app.log.error(`Error sending reminder for appointment ${row.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
           remindersSkipped.push({
             appointmentId: row.id,
             reason: 'Error occurred'
@@ -268,8 +268,8 @@ export function registerCommunicationRoutes(app: FastifyInstance) {
         }
       };
 
-    } catch (error) {
-      app.log.error('Error sending reminder emails:', error);
+    } catch (error: unknown) {
+      app.log.error(`Error sending reminder emails: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
