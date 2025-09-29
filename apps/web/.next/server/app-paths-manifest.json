@@ -1,19 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/proxy/ai-scheduler/analyze-conflicts/route": "app/api/proxy/ai-scheduler/analyze-conflicts/route.js",
-  "/api/proxy/ai-scheduler/optimize-route/route": "app/api/proxy/ai-scheduler/optimize-route/route.js",
-  "/api/proxy/claims/[claimId]/communications/route": "app/api/proxy/claims/[claimId]/communications/route.js",
-  "/api/proxy/claims/assignments/route": "app/api/proxy/claims/assignments/route.js",
-  "/api/proxy/claims/route": "app/api/proxy/claims/route.js",
-  "/api/proxy/claims/[claimId]/stage/route": "app/api/proxy/claims/[claimId]/stage/route.js",
-  "/api/proxy/communications/history/[appointmentId]/route": "app/api/proxy/communications/history/[appointmentId]/route.js",
-  "/api/proxy/communications/send-email/route": "app/api/proxy/communications/send-email/route.js",
-  "/api/proxy/routing/optimize/route": "app/api/proxy/routing/optimize/route.js",
-  "/claims/[id]/page": "app/claims/[id]/page.js",
-  "/kanban/page": "app/kanban/page.js",
-  "/claims/intake/page": "app/claims/intake/page.js",
   "/page": "app/page.js",
+  "/api/proxy/claims/assignments/route": "app/api/proxy/claims/assignments/route.js",
   "/api/proxy/claims/[claimId]/appointments/route": "app/api/proxy/claims/[claimId]/appointments/route.js",
-  "/templates/page": "app/templates/page.js",
-  "/api/proxy/ai-scheduler/suggest/route": "app/api/proxy/ai-scheduler/suggest/route.js"
+  "/api/proxy/routing/optimize/route": "app/api/proxy/routing/optimize/route.js"
 }
