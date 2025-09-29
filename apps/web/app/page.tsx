@@ -9,6 +9,7 @@ import AppointmentCard from '../components/../components/cards/AppointmentCard';
 import CommsLog from '../components/../components/comms-log/Log';
 import TemplatePicker from '../components/../components/templates/TemplatePicker';
 import StageTracker from '../components/../components/stage-tracker/StageTracker';
+import TutorialButton from '../components/tutorial/TutorialButton';
 import { getAssignments, listAppointments } from '../lib/api-client';
 
 // Define types for our data structures
@@ -283,7 +284,7 @@ export default function Page() {
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <OfflineBanner />
       {/* Enhanced Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl" data-tutorial="header">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div>
@@ -296,6 +297,7 @@ export default function Page() {
               <Link 
                 href="/kanban"
                 className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 focus:ring-2 focus:ring-purple-500 text-sm font-semibold shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5"
+                data-tutorial="kanban-nav"
               >
                 <span className="flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -307,6 +309,7 @@ export default function Page() {
               <Link 
                 href="/claims/intake"
                 className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 focus:ring-2 focus:ring-emerald-500 text-sm font-semibold shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5"
+                data-tutorial="new-claim"
               >
                 <span className="flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,8 +331,10 @@ export default function Page() {
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
-          <AppointmentCalendar items={allAppointments} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div data-tutorial="calendar">
+            <AppointmentCalendar items={allAppointments} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-tutorial="claim-cards">
             {claimCards.map((card: ClaimCardData, index: number) => (
               <div
                 key={index}
@@ -429,13 +434,22 @@ export default function Page() {
           </div>
         </div>
         <div className="space-y-6">
-          <RouteSummary legs={legs} />
-          <CommsLog items={comms} />
-          <TemplatePicker />
-          <StageTracker stage={currentStage} />
+          <div data-tutorial="route-summary">
+            <RouteSummary legs={legs} />
+          </div>
+          <div data-tutorial="comms-log">
+            <CommsLog items={comms} />
+          </div>
+          <div data-tutorial="templates">
+            <TemplatePicker />
+          </div>
+          <div data-tutorial="stage-tracker">
+            <StageTracker stage={currentStage} />
+          </div>
         </div>
         </div>
       </div>
+      <TutorialButton />
     </main>
   );
 }
